@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="base2d" width="800" height="600"></canvas>
+    <script type="module">
+    import { CoK } from './module/CoK.js';
+
+    const canvas2d = document.getElementById('base2d');
+    const cok = new CoK(canvas2d);
+
+    // Draw something in 2D
+    const ctx = cok.ctx2d;
+
+    function CloudBoom(ctx2d, {
+        count = 40,
+        minRadius = 15,
+        maxRadius = 60,
+        strokeWidth = 2,
+        maxXLoc,
+        maxYLoc
+    } = {}) {
+        const { width, height } = ctx2d.canvas;
+        const maxX = Math.min(maxXLoc ?? width, width);
+        const maxY = Math.min(maxYLoc ?? height, height);
+        ctx2d.save();
+        ctx2d.fillStyle = "#fff";
+        ctx2d.strokeStyle = "#000";
+        ctx2d.lineWidth = strokeWidth;
+
+        for (let i = 0; i < count; i += 1) {
+            const radius = Math.random() * (maxRadius - minRadius) + minRadius;
+            const x = Math.random() * maxX;
+            const y = Math.random() * maxY;
+            ctx2d.beginPath();
+            ctx2d.arc(x, y, radius, 0, Math.PI * 2);
+            ctx2d.fill();
+            ctx2d.stroke();
+            ctx2d.closePath();
+        }
+
+        ctx2d.restore();
+    }
+
+    ctx.fillStyle = "blue";
+    ctx.fillRect(0, 0, canvas2d.width, canvas2d.height);
+
+    CloudBoom(ctx, {
+        count: 1820,
+        maxRadius: 70,
+        strokeWidth: 10,
+        maxXLoc: 650,
+        maxYLoc: 300
+    });
+
+    const pixelationFs = `
+        precision mediump float;
+
+        varying vec2 v_texCoord;
+        uniform sampler2D u_texture;
+        uniform float u_blockSize;
+        uniform vec2  u_resolution;
+
+        void main(void) {
+            vec2 pixelPos = v_texCoord * u_resolution;
+            vec2 blockPos = floor(pixelPos / u_blockSize) * u_blockSize;
+            vec2 snappedUV = blockPos / u_resolution;
+            gl_FragColor = texture2D(u_texture, snappedUV);
+        }
+    `;
+
+
+    cok.setFragmentShader(pixelationFs);
+
+    // After that, before draw/render, set uniforms using raw WebGL:
+    const gl = cok.gl;
+    const prog = cok.program;
+
+    gl.useProgram(prog);
+
+    const uBlockSizeLoc = gl.getUniformLocation(prog, "u_blockSize");
+    const uResolutionLoc = gl.getUniformLocation(prog, "u_resolution");
+
+    gl.uniform1f(uBlockSizeLoc, 8); // chunk size in pixels
+    gl.uniform2f(uResolutionLoc, cok.canvas2d.width, cok.canvas2d.height);
+
+    cok.render();
+
+
+    // Pointer events still hit the 2D canvas underneath
+    canvas2d.addEventListener("click", (e) => {
+        console.log("2D canvas clicked", e.offsetX, e.offsetY);
+    });
+
+    </script>
+
+</body>
+</html>
