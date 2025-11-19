@@ -1,0 +1,45 @@
+{
+  "name": "canvas-on-kanvas",
+  "version": "1.0.0",
+  "description": "A tiny helper for adding WebGL Shaders on top of a 2D Canvas Context.",
+  "homepage": "https://github.com/yepistream/Canvas-On-Kanvas#readme",
+  "bugs": {
+    "url": "https://github.com/yepistream/Canvas-On-Kanvas/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yepistream/Canvas-On-Kanvas.git"
+  },
+  "keywords": [
+  "canvas",
+  "2d-canvas",
+  "webgl",
+  "webgl2",
+  "webgl-helper",
+  "webgl-overlay",
+  "canvas-overlay",
+  "canvas-texture",
+  "texture",
+  "glsl",
+  "shader",
+  "fragment-shader",
+  "postprocess",
+  "post-processing",
+  "image-effects",
+  "visual-effects",
+  "screen-space",
+  "graphics",
+  "html5-canvas",
+  "canvas-engine",
+  "canvas-compositor",
+  "2d-to-webgl"
+],
+  "license": "MIT",
+  "author": "MaBBam",
+  "type": "module",
+  "main": "dist/index.js",
+  "files": ["dist"], 
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
